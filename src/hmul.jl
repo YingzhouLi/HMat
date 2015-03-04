@@ -9,8 +9,10 @@ function hmul(A::HMat2d,B::HMat2d,C::HMat2d)
         if A.blockType == "LOWRANK" && B.blockType == "LOWRANK"
             Mtmp = A.VMat'*B.UMat
             (Utmp,Stmp,Vtmp) = svdtrunc(Mtmp,C.MAXRANK,C.EPS)
-            C.UMat = [C.UMat A.UMat*(Utmp.*sqrt(Stmp)')]
-            C.VMat = [C.VMat B.VMat*(Vtmp.*sqrt(Stmp)')]
+            if length(Stmp) > 0
+                C.UMat = [C.UMat A.UMat*(Utmp.*sqrt(Stmp))]
+                C.VMat = [C.VMat B.VMat*(Vtmp.*sqrt(Stmp))]
+            end
         elseif A.blockType == "LOWRANK" && ( B.blockType == "DENSE" || B.blockType == "HMAT" )
             C.UMat = [C.UMat A.UMat]
             C.VMat = [C.VMat hmatTvec(B,A.VMat)]
@@ -25,8 +27,10 @@ function hmul(A::HMat2d,B::HMat2d,C::HMat2d)
             (Qcol,) = qr(ABRcol)
             (Qrow,) = qr(BTATRrow)
             (Utmp,Stmp,Vtmp) = svdtrunc(pinv(Rrow'*Qcol)*Rrow'*ABRcol*pinv(Qrow'*Rcol),C.MAXRANK,C.EPS)
-            C.UMat = [C.UMat Qcol*(Utmp.*sqrt(Stmp)')]
-            C.VMat = [C.VMat Qrow*(Vtmp.*sqrt(Stmp)')]
+            if length(Stmp) > 0
+                C.UMat = [C.UMat Qcol*(Utmp.*sqrt(Stmp)')]
+                C.VMat = [C.VMat Qrow*(Vtmp.*sqrt(Stmp)')]
+            end
         end
         hcompress(C)
     elseif C.blockType == "DENSE"
@@ -35,7 +39,9 @@ function hmul(A::HMat2d,B::HMat2d,C::HMat2d)
         if A.blockType == "LOWRANK" && B.blockType == "LOWRANK"
             Mtmp = A.VMat'*B.UMat
             (Utmp,Stmp,Vtmp) = svdtrunc(Mtmp,C.MAXRANK,C.EPS)
-            hadd!(C,A.UMat*(Utmp.*sqrt(Stmp)'),B.VMat*(Vtmp.*sqrt(Stmp)'))
+            if length(Stmp) > 0
+                hadd!(C,A.UMat*(Utmp.*sqrt(Stmp)'),B.VMat*(Vtmp.*sqrt(Stmp)'))
+            end
         elseif A.blockType == "LOWRANK" && ( B.blockType == "DENSE" || B.blockType == "HMAT" )
             hadd!(C,A.UMat,hmatTvec(B,A.VMat))
         elseif ( A.blockType == "DENSE" || A.blockType == "HMAT" ) && B.blockType == "LOWRANK"
@@ -50,5 +56,11 @@ function hmul(A::HMat2d,B::HMat2d,C::HMat2d)
             end
         end
     end
-    return node
+end
+
+function hmul(A::HMat2d,B::HMat2d)
+    assert(A.width == B.height)
+    C = hempty(A)
+    hmul(A,B,C)
+    return C
 end

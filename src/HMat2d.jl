@@ -1,5 +1,6 @@
 export HMat2d
 
+
 type HMat2d
     # variables
     height::    Int64
@@ -63,12 +64,16 @@ function Z2Cmapper(n,minn,tensor)
 end
 
 function svdtrunc(A,eps,mR)
-    (U, S, V) = svd(full(A),thin=true);
-    idx = find(find(S/S[1].>eps).<=mR)
-    return U[:,idx], S[idx], V[:,idx]
+    (U, S, V) = svd(full(A),thin=true)
+    if minimum(size(A))>1 && S[1] > 1e-15
+        idx = find(find(S/S[1].>eps).<=mR)
+        return U[:,idx], S[idx], V[:,idx]
+    else
+        return U, S, V
+    end
 end
 
-function HMat2dd2h(D, nTrg, nSrc, type_admiss, minn, idxTrg, idxSrc, level, EPS, MaxRank, minn)
+function HMat2dd2h(D, nTrg, nSrc, type_admiss, idxTrg, idxSrc, level, EPS, MaxRank, minn)
     node = HMat2d()
     node.height = prod(nTrg)
     node.width = prod(nSrc)
@@ -83,8 +88,13 @@ function HMat2dd2h(D, nTrg, nSrc, type_admiss, minn, idxTrg, idxSrc, level, EPS,
     if admiss(idxTrg,idxSrc,type_admiss)
         (Utmp, Stmp, Vtmp) = svdtrunc(D,EPS,MaxRank)
         node.blockType = "LOWRANK"
-        node.UMat = Utmp.*sqrt(Stmp)'
-        node.VMat = Vtmp.*sqrt(Stmp)'
+        if length(Stmp) > 0
+            node.UMat = Utmp.*sqrt(Stmp)'
+            node.VMat = Vtmp.*sqrt(Stmp)'
+        else
+            node.UMat = Utmp
+            node.VMat = Vtmp
+        end
     elseif maximum(nTrg) <= minn || maximum(nSrc) <= minn
         node.blockType = "DENSE"
         node.DMat = full(D)
@@ -106,10 +116,19 @@ function HMat2dd2h(D, nTrg, nSrc, type_admiss, minn, idxTrg, idxSrc, level, EPS,
                 (sxlen,sylen) = ifloor(nSrc/2).*(1-[sx,sy]) + iceil(nSrc/2).*[sx,sy]
                 sRange = soffset + (1:sxlen*sylen)
                 soffset = soffset + sxlen*sylen
-                node.childHMat[tx*2+ty+1,sx*2+sy+1] = HMat2dD2H(D[tRange,sRange],[txlen,tylen],[sxlen,sylen],type_admiss,minn,trg,src,level+1)
+                node.childHMat[tx*2+ty+1,sx*2+sy+1] = HMat2dd2h(D[tRange,sRange],[txlen,tylen],[sxlen,sylen],type_admiss,trg,src,level+1,EPS,MaxRank,minn)
             end
         end
     end
     return node
 end
+
+include("../src/hcopy.jl")
+include("../src/hempty.jl")
 include("../src/hmatvec.jl")
+include("../src/hcompress.jl")
+include("../src/huncompress.jl")
+include("../src/hscale.jl")
+include("../src/hadd.jl")
+include("../src/hnorm.jl")
+include("../src/hmul.jl")

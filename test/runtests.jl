@@ -27,12 +27,12 @@ n = 8
 A = laplacian2d(n,n)
 
 EPS = 1e-2
-MaxRank = 2
+MaxRank = 4
 minn = 4
 
 Z2C = Z2Cmapper([n,n],minn,reshape(1:n^2,n,n))
-A = A[Z2C,Z2C];
-@time AH = HMat2dd2h(A, [n,n], [n,n], "STANDARD", minn, [0,0], [0,0], 1, EPS, MaxRank, minn)
+A = full(A[Z2C,Z2C]);
+@time AH = HMat2dd2h(A, [n,n], [n,n], "WEAK", [0,0], [0,0], 1, EPS, MaxRank, minn)
 
 v = rand(n^2,5)
 uext  = A*v
@@ -50,3 +50,30 @@ uhmat = hvecmat(v',AH)
 uext  = v'*A'
 uhmat = hvecmatT(v',AH)
 @printf("hvecmatT error: %.3e\n",norm(uext-uhmat)/norm(uext))
+
+AD = hh2d(AH)
+@printf("hh2d error: %.3e\n",norm(AD-A)/norm(A))
+
+BH = hcopy(AH)
+CH = hadd(AH,BH)
+CD = hh2d(CH)
+@printf("hadd error: %.3e\n",norm(CD-A-A)/norm(2*A))
+
+UMat = rand(n^2,MaxRank)
+VMat = rand(n^2,MaxRank)
+CH = hadd(AH,UMat,VMat)
+CD = hh2d(CH)
+@printf("hadd error: %.3e\n",norm(CD-A-UMat*VMat')/norm(A+UMat*VMat'))
+
+alpha = 3.1
+CH = hscale(alpha,AH)
+CD = hh2d(CH)
+@printf("hscale error: %.3e\n",norm(CD-alpha*A)/norm(alpha*A))
+
+BH = hcopy(AH)
+CH = hmul(AH,BH)
+CD = hh2d(CH)
+@printf("hmul error: %.3e\n",norm(CD-A*A)/norm(A*A))
+
+Anormfro = hnorm(AH,"fro")
+@printf("hnorm fro error: %.3e\n",norm(Anormfro-normfro(A))/normfro(A))

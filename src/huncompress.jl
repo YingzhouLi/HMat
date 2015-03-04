@@ -2,7 +2,7 @@ function hh2d(A::HMat2d)
     if A.blockType == "LOWRANK"
         return A.UMat*A.VMat'
     elseif A.blockType == "DENSE"
-        return A.DMAT
+        return A.DMat
     elseif A.blockType == "HMAT"
         D = zeros(A.height,A.width)
         hoffset = 0
@@ -17,5 +17,6 @@ function hh2d(A::HMat2d)
                 end
             end
         end
+        return D
     end
 end
