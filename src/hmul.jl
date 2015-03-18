@@ -2,8 +2,12 @@ function hmul(A::HMat2d,B::HMat2d,C::HMat2d)
     assert(A.width == B.height);
     assert(A.height == C.height);
     assert(B.width == C.width);
-    assert(C.trg == A.trg);
-    assert(C.src == B.src);
+    if C.trg != A.trg
+        C.trg = A.trg;
+    end
+    if C.src != B.src
+        C.src = B.src;
+    end
 
     if C.blockType == LOWRANK
         if A.blockType == LOWRANK && B.blockType == LOWRANK

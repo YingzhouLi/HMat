@@ -134,3 +134,47 @@ function hadd!(A::HMat2d,UMat::Array,VMat::Array)
         end
     end
 end
+
+function hadddiag(A::HMat2d,alpha)
+    C = HMat2d();
+    C.height = A.height;
+    C.width = A.width;
+    C.trg = A.trg;
+    C.src = A.src;
+    C.level = A.level;
+
+    C.EPS = A.EPS;
+    C.MAXRANK = A.MAXRANK;
+    C.MINN = A.MINN;
+
+    if A.blockType == LOWRANK
+        C.blockType = LOWRANK;
+        C.UMat = A.UMat;
+        C.VMat = A.VMat;
+    elseif A.blockType == DENSE
+        C.blockType = DENSE;
+        C.DMat = A.DMat;
+        if C.trg == C.src
+            C.DMat += alpha*eye(C.height);
+        end
+    elseif A.blockType == HMAT
+        C.blockType = HMAT;
+        C.childHMat = Array(HMat2d,4,4);
+        for i = 1:4, j = 1:4
+            C.childHMat[i,j] = hadddiag(A.childHMat[i,j],alpha);
+        end
+    end
+    return C;
+end
+
+function hadddiag!(A::HMat2d,alpha)
+    if A.blockType == DENSE
+        if A.trg == A.src
+            A.DMat += alpha*eye(A.height);
+        end
+    elseif A.blockType == HMAT
+        for i = 1:4
+            hadddiag!(A.childHMat[i,i],alpha);
+        end
+    end
+end

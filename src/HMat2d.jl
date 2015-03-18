@@ -129,6 +129,7 @@ end
 
 include("../src/hcopy.jl");
 include("../src/hempty.jl");
+include("../src/hidentity.jl");
 include("../src/hmatvec.jl");
 include("../src/hcompress.jl");
 include("../src/huncompress.jl");
@@ -136,3 +137,5 @@ include("../src/hscale.jl");
 include("../src/hadd.jl");
 include("../src/hnorm.jl");
 include("../src/hmul.jl");
+include("../src/hinv.jl");
+include("../src/hNewton.jl");

@@ -46,7 +46,7 @@ A = inv(full(A[Z2C,Z2C]));
 AH64 = HMat2dd2h(A, [n,n], [n,n], EDGE, [0,0], [0,0], 1, EPS, MaxRank, minn);
 
 n=16;
-BH16 = AH16;
+BH16 = hcopy(AH16);
 CH16 = hmul(AH16,BH16);
 tic();
 for i=1:10
@@ -55,7 +55,7 @@ end
 toc();
 
 n=32;
-BH32 = AH32;
+BH32 = hcopy(AH32);
 CH32 = hmul(AH32,BH32);
 tic();
 for i=1:10
@@ -64,7 +64,7 @@ end
 toc();
 
 n=64;
-BH64 = AH64;
+BH64 = hcopy(AH64);
 CH64 = hmul(AH64,BH64);
 tic();
 for i=1:10
