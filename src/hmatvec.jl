@@ -6,7 +6,7 @@ function hmatvec(A::HMat2d,v)
         return A.DMat*v;
     else
         uoffset = 0;
-        u = zeros(typeof(v[1,1]),A.height,size(v,2));
+        u = zeros(A.height,size(v,2));
         for i = 1:4
             voffset = 0;
             for j = 1:4
@@ -30,7 +30,7 @@ function hmatTvec(A::HMat2d,v)
         return A.DMat'*v;
     else
         uoffset = 0;
-        u = zeros(typeof(v[1,1]),A.width,size(v,2));
+        u = zeros(A.width,size(v,2));
         for j = 1:4
             voffset = 0;
             for i = 1:4
@@ -54,7 +54,7 @@ function hvecmat(v,A::HMat2d)
         return v*A.DMat;
     else
         uoffset = 0;
-        u = zeros(typeof(v[1,1]),size(v,1),A.width);
+        u = zeros(size(v,1),A.width);
         for j = 1:4
             voffset = 0;
             for i = 1:4
@@ -78,7 +78,7 @@ function hvecmatT(v,A::HMat2d)
         return v*A.DMat';
     else
         uoffset = 0;
-        u = zeros(typeof(v[1,1]),size(v,1),A.height);
+        u = zeros(size(v,1),A.height);
         for i = 1:4
             voffset = 0;
             for j = 1:4

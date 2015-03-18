@@ -128,6 +128,7 @@ function HMat2dd2h(D, nTrg, nSrc, type_admiss, idxTrg, idxSrc, level, EPS, MaxRa
 end
 
 include("../src/hcopy.jl");
+include("../src/hadjoint.jl");
 include("../src/hempty.jl");
 include("../src/hidentity.jl");
 include("../src/hmatvec.jl");
