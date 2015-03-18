@@ -10,15 +10,15 @@ function hcopy(A::HMat2d)
     C.MAXRANK = A.MAXRANK
     C.MINN = A.MINN
 
-    if A.blockType == "LOWRANK"
-        C.blockType = "LOWRANK"
+    if A.blockType == LOWRANK
+        C.blockType = LOWRANK
         C.UMat = A.UMat
         C.VMat = A.VMat
-    elseif A.blockType == "DENSE"
-        C.blockType = "DENSE"
+    elseif A.blockType == DENSE
+        C.blockType = DENSE
         C.DMat = A.DMat
-    elseif A.blockType == "HMAT"
-        C.blockType = "HMAT"
+    elseif A.blockType == HMAT
+        C.blockType = HMAT
         C.childHMat = Array(HMat2d,4,4)
         for i = 1:4
             for j = 1:4

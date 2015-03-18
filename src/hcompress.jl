@@ -1,16 +1,18 @@
 function hcompress(A::HMat2d)
-    if A.blockType == "LOWRANK"
-        (QU,RU) = qr(A.UMat)
-        (QV,RV) = qr(A.VMat)
-        (Utmp,Stmp,Vtmp) = svdtrunc(RU*RV',A.EPS,A.MAXRANK)
-        if length(Stmp) > 0
-            A.UMat = QU*(Utmp.*sqrt(Stmp)')
-            A.VMat = QV*(Vtmp.*sqrt(Stmp)')
-        else
-            A.UMat = QU*Utmp
-            A.VMat = QV*Vtmp
+    if A.blockType == LOWRANK
+        if size(A.UMat,2)>A.MAXRANK
+            (QU,RU) = qr(A.UMat)
+            (QV,RV) = qr(A.VMat)
+            (Utmp,Stmp,Vtmp) = svdtrunc(RU*RV',A.EPS,A.MAXRANK)
+            if length(Stmp) > 0
+                A.UMat = QU*(Utmp.*sqrt(Stmp)')
+                A.VMat = QV*(Vtmp.*sqrt(Stmp)')
+            else
+                A.UMat = QU*Utmp
+                A.VMat = QV*Vtmp
+            end
         end
-    elseif A.blockType == "HMAT"
+    elseif A.blockType == HMAT
         for C in A.childHMat
             hcompress(C)
         end
@@ -24,7 +26,7 @@ function hh2l(A::HMat2d)
     ATRrow = hmatTvec(A,Rrow)
     (Qcol,) = qr(ARcol)
     (Qrow,) = qr(ATRrow)
-    (Utmp,Stmp,Vtmp) = svdtrunc(pinv(Rrow'*Qcol)*Rrow'*ARcol*pinv(Qrow'*Rcol),A.MAXRANK,A.EPS)
+    (Utmp,Stmp,Vtmp) = svdtrunc(pinv(Rrow'*Qcol)*Rrow'*ARcol*pinv(Qrow'*Rcol),A.EPS,A.MAXRANK)
     if length(Stmp) > 0
         UMat = Qcol*(Utmp.*sqrt(Stmp)')
         VMat = Qrow*(Vtmp.*sqrt(Stmp)')

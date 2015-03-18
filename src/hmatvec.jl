@@ -1,8 +1,8 @@
 function hmatvec(A::HMat2d,v)
     assert(A.width == size(v,1))
-    if A.blockType == "LOWRANK"
+    if A.blockType == LOWRANK
         return A.UMat*(A.VMat'*v)
-    elseif A.blockType == "DENSE"
+    elseif A.blockType == DENSE
         return A.DMat*v
     else
         uoffset = 0
@@ -24,9 +24,9 @@ end
 
 function hmatTvec(A::HMat2d,v)
     assert(A.height == size(v,1))
-    if A.blockType == "LOWRANK"
+    if A.blockType == LOWRANK
         return A.VMat*(A.UMat'*v)
-    elseif A.blockType == "DENSE"
+    elseif A.blockType == DENSE
         return A.DMat'*v
     else
         uoffset = 0
@@ -48,9 +48,9 @@ end
 
 function hvecmat(v,A::HMat2d)
     assert(A.height == size(v,2))
-    if A.blockType == "LOWRANK"
-        return v*A.UMat*A.VMat'
-    elseif A.blockType == "DENSE"
+    if A.blockType == LOWRANK
+        return (v*A.UMat)*A.VMat'
+    elseif A.blockType == DENSE
         return v*A.DMat
     else
         uoffset = 0
@@ -72,9 +72,9 @@ end
 
 function hvecmatT(v,A::HMat2d)
     assert(A.width == size(v,2))
-    if A.blockType == "LOWRANK"
+    if A.blockType == LOWRANK
         return v*A.VMat*A.UMat'
-    elseif A.blockType == "DENSE"
+    elseif A.blockType == DENSE
         return v*A.DMat'
     else
         uoffset = 0

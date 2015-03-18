@@ -1,5 +1,9 @@
 export HMat2d
 
+include("../src/Enums.jl")
+
+@enum ADMISSTYPES STRONG STANDARD EDGE WEAK
+@enum BLOCKTYPES LOWRANK DENSE HMAT
 
 type HMat2d
     # variables
@@ -8,7 +12,7 @@ type HMat2d
     level::     Int64
     trg::       Array
     src::       Array
-    blockType:: String
+    blockType:: BLOCKTYPES
     childHMat:: Array
     UMat::      Array
     VMat::      Array
@@ -21,19 +25,19 @@ type HMat2d
 end
 
 function admiss(x,y,type_admiss)
-    if ((type_admiss == "STRONG") || (type_admiss == "STANDARD"))
+    if ((type_admiss == STRONG) || (type_admiss == STANDARD))
         if maximum(x-y) > 1
             return true
         else
             return false
         end
-    elseif type_admiss == "EDGE"
-        if sum(x-y) > 1
+    elseif type_admiss == EDGE
+        if sum(abs(x-y)) > 1
             return true
         else
             return false
         end
-    elseif type_admiss == "WEAK"
+    elseif type_admiss == WEAK
         if x != y
             return true
         else
@@ -87,7 +91,7 @@ function HMat2dd2h(D, nTrg, nSrc, type_admiss, idxTrg, idxSrc, level, EPS, MaxRa
 
     if admiss(idxTrg,idxSrc,type_admiss)
         (Utmp, Stmp, Vtmp) = svdtrunc(D,EPS,MaxRank)
-        node.blockType = "LOWRANK"
+        node.blockType = LOWRANK
         if length(Stmp) > 0
             node.UMat = Utmp.*sqrt(Stmp)'
             node.VMat = Vtmp.*sqrt(Stmp)'
@@ -96,10 +100,10 @@ function HMat2dd2h(D, nTrg, nSrc, type_admiss, idxTrg, idxSrc, level, EPS, MaxRa
             node.VMat = Vtmp
         end
     elseif maximum(nTrg) <= minn || maximum(nSrc) <= minn
-        node.blockType = "DENSE"
+        node.blockType = DENSE
         node.DMat = full(D)
     else
-        node.blockType = "HMAT"
+        node.blockType = HMAT
         node.childHMat = Array(HMat2d,4,4)
         trg = 2*idxTrg
         src = 2*idxSrc

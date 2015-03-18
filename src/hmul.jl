@@ -5,18 +5,18 @@ function hmul(A::HMat2d,B::HMat2d,C::HMat2d)
     assert(C.trg == A.trg)
     assert(C.src == B.src)
 
-    if C.blockType == "LOWRANK"
-        if A.blockType == "LOWRANK" && B.blockType == "LOWRANK"
+    if C.blockType == LOWRANK
+        if A.blockType == LOWRANK && B.blockType == LOWRANK
             Mtmp = A.VMat'*B.UMat
-            (Utmp,Stmp,Vtmp) = svdtrunc(Mtmp,C.MAXRANK,C.EPS)
+            (Utmp,Stmp,Vtmp) = svdtrunc(Mtmp,C.EPS,C.MAXRANK)
             if length(Stmp) > 0
-                C.UMat = [C.UMat A.UMat*(Utmp.*sqrt(Stmp))]
-                C.VMat = [C.VMat B.VMat*(Vtmp.*sqrt(Stmp))]
+                C.UMat = [C.UMat A.UMat*(Utmp.*sqrt(Stmp)')]
+                C.VMat = [C.VMat B.VMat*(Vtmp.*sqrt(Stmp)')]
             end
-        elseif A.blockType == "LOWRANK" && ( B.blockType == "DENSE" || B.blockType == "HMAT" )
+        elseif A.blockType == LOWRANK && ( B.blockType == DENSE || B.blockType == HMAT )
             C.UMat = [C.UMat A.UMat]
             C.VMat = [C.VMat hmatTvec(B,A.VMat)]
-        elseif ( A.blockType == "DENSE" || A.blockType == "HMAT" ) && B.blockType == "LOWRANK"
+        elseif ( A.blockType == DENSE || A.blockType == HMAT ) && B.blockType == LOWRANK
             C.UMat = [C.UMat hmatvec(A,B.UMat)]
             C.VMat = [C.VMat B.VMat]
         else
@@ -26,31 +26,31 @@ function hmul(A::HMat2d,B::HMat2d,C::HMat2d)
             BTATRrow = hmatTvec(B,hmatTvec(A,Rrow))
             (Qcol,) = qr(ABRcol)
             (Qrow,) = qr(BTATRrow)
-            (Utmp,Stmp,Vtmp) = svdtrunc(pinv(Rrow'*Qcol)*Rrow'*ABRcol*pinv(Qrow'*Rcol),C.MAXRANK,C.EPS)
+            (Utmp,Stmp,Vtmp) = svdtrunc(pinv(Rrow'*Qcol)*Rrow'*ABRcol*pinv(Qrow'*Rcol),C.EPS,C.MAXRANK)
             if length(Stmp) > 0
                 C.UMat = [C.UMat Qcol*(Utmp.*sqrt(Stmp)')]
                 C.VMat = [C.VMat Qrow*(Vtmp.*sqrt(Stmp)')]
             end
         end
         hcompress(C)
-    elseif C.blockType == "DENSE"
+    elseif C.blockType == DENSE
         C.DMat += hh2d(A)*hh2d(B)
     else
-        if A.blockType == "LOWRANK" && B.blockType == "LOWRANK"
+        if A.blockType == LOWRANK && B.blockType == LOWRANK
             Mtmp = A.VMat'*B.UMat
-            (Utmp,Stmp,Vtmp) = svdtrunc(Mtmp,C.MAXRANK,C.EPS)
+            (Utmp,Stmp,Vtmp) = svdtrunc(Mtmp,C.EPS,C.MAXRANK)
             if length(Stmp) > 0
                 hadd!(C,A.UMat*(Utmp.*sqrt(Stmp)'),B.VMat*(Vtmp.*sqrt(Stmp)'))
             end
-        elseif A.blockType == "LOWRANK" && ( B.blockType == "DENSE" || B.blockType == "HMAT" )
+        elseif A.blockType == LOWRANK && ( B.blockType == DENSE || B.blockType == HMAT )
             hadd!(C,A.UMat,hmatTvec(B,A.VMat))
-        elseif ( A.blockType == "DENSE" || A.blockType == "HMAT" ) && B.blockType == "LOWRANK"
+        elseif ( A.blockType == DENSE || A.blockType == HMAT ) && B.blockType == LOWRANK
             hadd!(C,hmatvec(A,B.UMat),B.VMat)
-        elseif A.blockType == "HMAT" && B.blockType == "DENSE"
+        elseif A.blockType == HMAT && B.blockType == DENSE
             error("Not been implemented")
-        elseif A.blockType == "DENSE" && B.blockType == "HMAT"
+        elseif A.blockType == DENSE && B.blockType == HMAT
             error("Not been implemented")
-        elseif A.blockType == "HMAT" && B.blockType == "HMAT"
+        elseif A.blockType == HMAT && B.blockType == HMAT
             for i = 1:4, j = 1:4, k = 1:4
                 hmul(A.childHMat[i,k],B.childHMat[k,j],C.childHMat[i,j])
             end

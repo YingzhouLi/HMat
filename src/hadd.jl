@@ -13,9 +13,9 @@ function hadd(A::HMat2d,B::HMat2d)
     C.MAXRANK = A.MAXRANK
     C.MINN = A.MINN
 
-    if A.blockType == "LOWRANK"
-        C.blockType = "LOWRANK"
-        if B.blockType == "LOWRANK"
+    if A.blockType == LOWRANK
+        C.blockType = LOWRANK
+        if B.blockType == LOWRANK
             C.UMat = [A.UMat B.UMat]
             C.VMat = [A.VMat B.VMat]
         else
@@ -24,21 +24,21 @@ function hadd(A::HMat2d,B::HMat2d)
             C.VMat = [A.VMat Vtmp]
         end
         hcompress(C)
-    elseif A.blockType == "DENSE"
-        C.blockType = "DENSE"
+    elseif A.blockType == DENSE
+        C.blockType = DENSE
         C.DMat = A.DMat + hh2d(B)
-    elseif A.blockType == "HMAT"
-        C.blockType = "HMAT"
+    elseif A.blockType == HMAT
+        C.blockType = HMAT
         C.childHMat = Array(HMat2d,4,4)
         hoffset = 0
         for i = 1:4
             woffset = 0
             for j = 1:4
-                if B.blockType == "LOWRANK"
+                if B.blockType == LOWRANK
                     BH = HMat2d()
                     BH.height = A.childHMat[i,j].height
                     BH.width = A.childHMat[i,j].width
-                    BH.blockType = "LOWRANK"
+                    BH.blockType = LOWRANK
                     BH.UMat = B.UMat[hoffset+(1:BH.height),:]
                     BH.VMat = B.VMat[woffset+(1:BH.width),:]
                     woffset += BH.width
@@ -46,11 +46,11 @@ function hadd(A::HMat2d,B::HMat2d)
                         hoffset += BH.height
                     end
                     C.childHMat[i,j] = hadd(A.childHMat[i,j],BH)
-                elseif B.blockType == "DENSE"
+                elseif B.blockType == DENSE
                     BH = HMat2d()
                     BH.height = A.childHMat[i,j].height
                     BH.width = A.childHMat[i,j].width
-                    BH.blockType = "DENSE"
+                    BH.blockType = DENSE
                     BH.EPS = B.EPS
                     BH.MAXRANK = B.MAXRANK
                     BH.MINN = B.MINN
@@ -84,16 +84,16 @@ function hadd(A::HMat2d,UMat::Array,VMat::Array)
     C.MAXRANK = A.MAXRANK
     C.MINN = A.MINN
 
-    if A.blockType == "LOWRANK"
-        C.blockType = "LOWRANK"
+    if A.blockType == LOWRANK
+        C.blockType = LOWRANK
         C.UMat = [A.UMat UMat]
         C.VMat = [A.VMat VMat]
         hcompress(C)
-    elseif A.blockType == "DENSE"
-        C.blockType = "DENSE"
+    elseif A.blockType == DENSE
+        C.blockType = DENSE
         C.DMat = A.DMat + UMat*VMat'
-    elseif A.blockType == "HMAT"
-        C.blockType = "HMAT"
+    elseif A.blockType == HMAT
+        C.blockType = HMAT
         C.childHMat = Array(HMat2d,4,4)
         hoffset = 0
         for i = 1:4
@@ -114,13 +114,13 @@ function hadd!(A::HMat2d,UMat::Array,VMat::Array)
     assert(A.height == size(UMat,1))
     assert(A.width == size(VMat,1))
 
-    if A.blockType == "LOWRANK"
+    if A.blockType == LOWRANK
         A.UMat = [A.UMat UMat]
         A.VMat = [A.VMat VMat]
         hcompress(A)
-    elseif A.blockType == "DENSE"
+    elseif A.blockType == DENSE
         A.DMat += UMat*VMat'
-    elseif A.blockType == "HMAT"
+    elseif A.blockType == HMAT
         hoffset = 0
         for i = 1:4
             woffset = 0

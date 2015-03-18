@@ -13,11 +13,11 @@ function hnorm(A::HMat2d,p="fro")
 end
 
 function hnormfro(A::HMat2d)
-    if A.blockType == "LOWRANK"
+    if A.blockType == LOWRANK
         return sqrt(trace(A.UMat'*A.UMat*(A.VMat'*A.VMat)))
-    elseif A.blockType == "DENSE"
+    elseif A.blockType == DENSE
         return vecnorm(A.DMat)
-    elseif A.blockType == "HMAT"
+    elseif A.blockType == HMAT
         fro = 0
         for i = 1:4
             for j = 1:4
