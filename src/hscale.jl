@@ -1,5 +1,5 @@
-function hscale(alpha, A::HMat2d)
-    C = HMat2d();
+function hscale{T<:Number}(alpha, A::HMat2d{T})
+    C = HMat2d{T}();
     C.height = A.height;
     C.width = A.width;
     C.trg = A.trg;

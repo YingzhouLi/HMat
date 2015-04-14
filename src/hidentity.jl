@@ -15,8 +15,8 @@ function hidentity!(A::HMat2d)
     end
 end
 
-function hidentity(A::HMat2d)
-    C = HMat2d();
+function hidentity{T<:Number}(A::HMat2d{T})
+    C = HMat2d{T}();
     C.height = A.height;
     C.width = A.width;
     C.trg = A.trg;

@@ -1,8 +1,8 @@
-function hadd(A::HMat2d,B::HMat2d)
+function hadd{T<:Number}(A::HMat2d{T},B::HMat2d{T})
     assert(A.height == B.height);
     assert(A.width == B.width);
 
-    C = HMat2d();
+    C = HMat2d{T}();
     C.height = A.height;
     C.width = A.width;
     C.trg = A.trg;
@@ -69,11 +69,11 @@ function hadd(A::HMat2d,B::HMat2d)
     return C;
 end
 
-function hadd(A::HMat2d,UMat::Array,VMat::Array)
+function hadd{T<:Number}(A::HMat2d{T},UMat::Matrix{T},VMat::Matrix{T})
     assert(A.height == size(UMat,1));
     assert(A.width == size(VMat,1));
 
-    C = HMat2d();
+    C = HMat2d{T}();
     C.height = A.height;
     C.width = A.width;
     C.trg = A.trg;
@@ -110,7 +110,7 @@ function hadd(A::HMat2d,UMat::Array,VMat::Array)
     return C;
 end
 
-function hadd!(A::HMat2d,UMat::Array,VMat::Array)
+function hadd!(A::HMat2d,UMat::AbstractMatrix,VMat::AbstractMatrix)
     assert(A.height == size(UMat,1));
     assert(A.width == size(VMat,1));
 
@@ -125,7 +125,11 @@ function hadd!(A::HMat2d,UMat::Array,VMat::Array)
         for i = 1:4
             woffset = 0;
             for j = 1:4
-                hadd!(A.childHMat[i,j],UMat[hoffset+(1:A.childHMat[i,j].height),:],VMat[woffset+(1:A.childHMat[i,j].width),:]);
+                urange = hoffset .+ (1:A.childHMat[i,j].height)
+                vrange = woffset .+ (1:A.childHMat[i,j].width)
+                hadd!(A.childHMat[i,j],
+                      sub(UMat,urange,:),
+                      sub(VMat,vrange,:))
                 woffset += A.childHMat[i,j].width;
                 if j == 4
                     hoffset += A.childHMat[i,j].height;
@@ -135,8 +139,8 @@ function hadd!(A::HMat2d,UMat::Array,VMat::Array)
     end
 end
 
-function hadddiag(A::HMat2d,alpha)
-    C = HMat2d();
+function hadddiag{T<:Number}(A::HMat2d{T},alpha)
+    C = HMat2d{T}();
     C.height = A.height;
     C.width = A.width;
     C.trg = A.trg;

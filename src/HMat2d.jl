@@ -5,23 +5,24 @@ include("../src/Enums.jl");
 @enum ADMISSTYPES STRONG STANDARD EDGE WEAK;
 @enum BLOCKTYPES LOWRANK DENSE HMAT;
 
-type HMat2d
+type HMat2d{T<:Number}
     # variables
-    height::    Int64
-    width::     Int64
-    level::     Int64
-    trg::       Array
-    src::       Array
+    height::    Int
+    width::     Int
+    level::     Int
+    trg::       Array{Int,1}
+    src::       Array{Int,1}
     blockType:: BLOCKTYPES
-    childHMat:: Array
-    UMat::      Array
-    VMat::      Array
-    DMat::      Array
-    HMat2d() = new()
+    childHMat:: Array{HMat2d,2}
+    UMat::      Array{T,2}
+    VMat::      Array{T,2}
+    DMat::      Array{T,2}
     # global settings
     EPS::       Float64
-    MAXRANK::   Int64
-    MINN::      Int64
+    MAXRANK::   Int
+    MINN::      Int
+
+    HMat2d() = new()
 end
 
 function admiss(x,y,type_admiss)
@@ -77,8 +78,8 @@ function svdtrunc(A,eps,mR)
     end
 end
 
-function HMat2dd2h(D, nTrg, nSrc, type_admiss, idxTrg, idxSrc, level, EPS, MaxRank, minn)
-    node = HMat2d();
+function HMat2dd2h{T}(D::AbstractMatrix{T}, nTrg, nSrc, type_admiss, idxTrg, idxSrc, level, EPS, MaxRank, minn)
+    node = HMat2d{T}();
     node.height = prod(nTrg);
     node.width = prod(nSrc);
     node.trg = idxTrg;

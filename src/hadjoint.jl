@@ -1,5 +1,5 @@
-function hadjoint(A::HMat2d)
-    C = HMat2d();
+function hadjoint{T<:Number}(A::HMat2d{T})
+    C = HMat2d{T}();
     C.height = A.width;
     C.width = A.height;
     C.trg = A.src;
