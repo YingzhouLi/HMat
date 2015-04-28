@@ -31,11 +31,11 @@ n=64;
 A = full(laplacian2d(n,n));
 Z2C = Z2Cmapper([n,n],minn,reshape(1:n^2,n,n));
 A = inv(full(A[Z2C,Z2C]));
-@time AH32 = HMat2dd2h(A, [n,n], [n,n], EDGE, [0,0], [0,0], 1, EPS, MaxRank, minn);
+@time AH = HMat2dd2h(A, [n,n], [n,n], WEAK, [0,0], [0,0], 1, EPS, MaxRank, minn);
 
 n=64;
-BH32 = hcopy(AH32);
-CH32 = hmul(AH32,BH32);
-@time CH32 = hmul(AH32,BH32);
-@profile CH32 = hmul(AH32,BH32);
-Profile.print()
+BH = hcopy(AH);
+CH = hmul(AH,BH);
+@time CH = hmul(AH,BH);
+#@profile CH = hmul(AH,BH);
+#Profile.print()

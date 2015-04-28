@@ -13,7 +13,7 @@ type HMat2d{T<:Number}
     trg::       Array{Int,1}
     src::       Array{Int,1}
     blockType:: BLOCKTYPES
-    childHMat:: Array{HMat2d,2}
+    childHMat:: Array{HMat2d{T},2}
     UMat::      Array{T,2}
     VMat::      Array{T,2}
     DMat::      Array{T,2}
@@ -105,7 +105,7 @@ function HMat2dd2h{T}(D::AbstractMatrix{T}, nTrg, nSrc, type_admiss, idxTrg, idx
         node.DMat = full(D);
     else
         node.blockType = HMAT;
-        node.childHMat = Array(HMat2d,4,4);
+        node.childHMat = Array(HMat2d{T},4,4);
         trg = 2*idxTrg;
         src = 2*idxSrc;
         toffset = 0;

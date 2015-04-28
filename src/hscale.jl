@@ -18,7 +18,7 @@ function hscale{T<:Number}(alpha, A::HMat2d{T})
         C.DMat = alpha*A.DMat;
     elseif A.blockType == HMAT
         C.blockType = HMAT;
-        C.childHMat = Array(HMat2d,4,4);
+        C.childHMat = Array(HMat2d{T},4,4);
         for i = 1:4, j = 1:4
             C.childHMat[i,j] = hscale(alpha,A.childHMat[i,j]);
         end

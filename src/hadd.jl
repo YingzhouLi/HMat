@@ -29,7 +29,7 @@ function hadd{T<:Number}(A::HMat2d{T},B::HMat2d{T})
         C.DMat = A.DMat + hh2d(B);
     elseif A.blockType == HMAT
         C.blockType = HMAT;
-        C.childHMat = Array(HMat2d,4,4);
+        C.childHMat = Array(HMat2d{T},4,4);
         hoffset = 0;
         for i = 1:4
             woffset = 0;
@@ -94,7 +94,7 @@ function hadd{T<:Number}(A::HMat2d{T},UMat::Matrix{T},VMat::Matrix{T})
         C.DMat = A.DMat + UMat*VMat';
     elseif A.blockType == HMAT
         C.blockType = HMAT;
-        C.childHMat = Array(HMat2d,4,4);
+        C.childHMat = Array(HMat2d{T},4,4);
         hoffset = 0;
         for i = 1:4
             woffset = 0;
@@ -163,7 +163,7 @@ function hadddiag{T<:Number}(A::HMat2d{T},alpha)
         end
     elseif A.blockType == HMAT
         C.blockType = HMAT;
-        C.childHMat = Array(HMat2d,4,4);
+        C.childHMat = Array(HMat2d{T},4,4);
         for i = 1:4, j = 1:4
             C.childHMat[i,j] = hadddiag(A.childHMat[i,j],alpha);
         end
