@@ -1,2 +1,2 @@
-# HMat.jl
-Hierarchical Matrix in Julia
+# HMat
+Hierarchical Matrix in Julia and Matlab
