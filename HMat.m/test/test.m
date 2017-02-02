@@ -10,12 +10,16 @@ for n = [64]
     Z2C = Z2Cmapper([n,n],minn,reshape(1:n^2,n,n));
     A = full(A(Z2C,Z2C));
 
-    AH = hd2h(A, [n,n], [n,n], 'S', [0,0], [0,0], 1, EPS, MaxRank, minn);
-
-    BH = hcopy(AH);
     tic;
-    CH = hmul(AH,BH);
+    AH = HMat(A, [n,n], [n,n], 'S', [0,0], [0,0], 1, EPS, MaxRank, minn);
     toc;
+
+    tic;
+	BH = AH;
+    toc;
+%     tic;
+%     CH = hmul(AH,BH);
+%     toc;
     %CD = hh2d(CH);
     %fprintf('N^2 = %3d^2, hmul error: %.3e\n',n,norm(CD-A*A)/norm(A*A));
 end
