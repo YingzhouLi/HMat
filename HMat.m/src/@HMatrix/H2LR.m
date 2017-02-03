@@ -1,4 +1,4 @@
-function LRMat = H2L(A)
+function LRMat = H2LR(A)
 
 Rcol = randn(A.width,A.MAXRANK+5);
 Rrow = randn(A.height,A.MAXRANK+5);

@@ -15,7 +15,7 @@ end
 function C = htimesh(A,B)
 
 if A.blockType == 'L'
-    LRMat = H2L(B);
+    LRMat = H2LR(B);
     C = A;
     C.LRMat = C.LRMat .* LRMat;
     C = compress(C);

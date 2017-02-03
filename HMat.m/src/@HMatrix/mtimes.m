@@ -4,7 +4,7 @@ if isa(A,'HMatrix') && isa(B,'HMatrix')
     C = empty(A);
     C = hmtimesh(A,B,C);
 elseif isa(A,'HMatrix') && isa(B,'LRMatrix')
-    C = LRMatrix(A*B.UMat,B.VMat,A.EPS,A.MAXRANK);
+    C = LRMatrix(A*B.UMat,B.VMat,B.EPS,B.MAXRANK);
 elseif isa(A,'LRMatrix') && isa(B,'HMatrix')
     C = LRMatrix(A.UMat,A.VMat'*B,A.EPS,A.MAXRANK);
 elseif isa(A,'HMatrix')
@@ -27,22 +27,22 @@ if C.blockType == 'L'
             && B.blockType == 'L'
         C.LRMat = A*B.LRMat + C.LRMat;
     else
-        Rcol = randn(B.width,C.MAXRANK+5);
-        Rrow = randn(A.height,C.MAXRANK+5);
+        Rcol = randn(B.width,C.LRMat.MAXRANK+5);
+        Rrow = randn(A.height,C.LRMat.MAXRANK+5);
         ABRcol = A*(B*Rcol);
         BTATRrow = B'*(A'*Rrow);
         [Qcol,~] = qr(ABRcol,0);
         [Qrow,~] = qr(BTATRrow,0);
         [Utmp,Stmp,Vtmp] = svdtrunc(...
             pinv(Rrow'*Qcol)*Rrow'*ABRcol*pinv(Qrow'*Rcol),...
-            C.EPS,C.MAXRANK);
+            C.LRMat.EPS,C.LRMat.MAXRANK);
         if max(size(Stmp)) > 0
             LRMat = LRMatrix(Qcol*(Utmp*sqrt(Stmp)), ...
-                Qrow*(Vtmp*sqrt(Stmp)), C.EPS, C.MAXRANK );
+                Qrow*(Vtmp*sqrt(Stmp)), C.LRMat.EPS, C.LRMat.MAXRANK );
             C.LRMat = LRMat + C.LRMat;
         end
     end
-    C = hcompress(C);
+    C = compress(C);
 elseif C.blockType == 'D'
     C.DMat = C.DMat + H2D(A)*H2D(B);
 else

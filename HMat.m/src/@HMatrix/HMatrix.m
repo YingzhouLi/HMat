@@ -2,10 +2,12 @@ classdef HMatrix
     properties
         height = 0
         width = 0
-        blockType
+        blockType = 'X'
         LRMat
         DMat
         childHMat
+        EPS
+        MAXRANK
     end
     
     methods
@@ -19,6 +21,8 @@ classdef HMatrix
             
             DH.height = prod(nTrg);
             DH.width = prod(nSrc);
+            DH.EPS = EPS;
+            DH.MAXRANK = MaxRank;
             
             if admiss(idxTrg,idxSrc,type_admiss)
                 DH.blockType = 'L';
@@ -45,7 +49,7 @@ classdef HMatrix
                     toffset = toffset + prod(tlen);
                     
                     soffset = 0;
-                    for itS = 0:1
+                    for itS = 0:nS-1
                         [~,idxS] = max(nSrc);
                         src = idxSrc;
                         src(idxS) = idxSrc(idxS)*nS + itS;
@@ -56,7 +60,7 @@ classdef HMatrix
                         soffset = soffset + prod(slen);
                         
                         DH.childHMat{itT+1,itS+1} = ...
-                            HMat( D(tRange, sRange), ...
+                            HMatrix( D(tRange, sRange), ...
                             tlen, slen, type_admiss, trg, src, ...
                             EPS, MaxRank, minn );
                         

@@ -7,10 +7,11 @@ if A.blockType == 'L'
 elseif A.blockType == 'D'
     C.DMat = zeros(A.height,A.width);
 elseif A.blockType == 'H'
-    C.childHMat = cell(size(A.childHMat));
-    for i = 1:length(A.childHMat)
-        C.childHMat{i} = empty(A.childHMat{i});
+    for it = 1:numel(A.childHMat)
+        C.childHMat{it} = empty(A.childHMat{it});
     end
+else
+    error('Wrong');
 end
 
 end
