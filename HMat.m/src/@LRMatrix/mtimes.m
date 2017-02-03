@@ -2,8 +2,6 @@ function C = mtimes(A,B)
 
 if isa(A,'LRMatrix') && isa(B,'LRMatrix')
     
-    assert( A.width == B.height );
-    
     if size(A.UMat,2) <= size(B.UMat,2)
         C = LRMatrix(A.UMat,B.VMat*(B.UMat'*A.VMat),A.EPS,A.MAXRANK);
     else

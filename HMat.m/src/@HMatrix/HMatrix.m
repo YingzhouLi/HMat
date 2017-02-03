@@ -2,44 +2,27 @@ classdef HMatrix
     properties
         height = 0
         width = 0
-        level = 0
-        trg
-        src
         blockType
-        UMat
-        VMat
+        LRMat
         DMat
         childHMat
-        EPS
-        MAXRANK
-        MINN
     end
     
     methods
         
         function DH = HMatrix( D, nTrg, nSrc, type_admiss, idxTrg, idxSrc, ...
-                level, EPS, MaxRank, minn)
+                EPS, MaxRank, minn)
+            
+            if nargin == 0
+                return;
+            end
             
             DH.height = prod(nTrg);
             DH.width = prod(nSrc);
-            DH.trg = idxTrg;
-            DH.src = idxSrc;
-            
-            DH.level = level;
-            DH.EPS = EPS;
-            DH.MAXRANK = MaxRank;
-            DH.MINN = minn;
             
             if admiss(idxTrg,idxSrc,type_admiss)
                 DH.blockType = 'L';
-                [Utmp,Stmp,Vtmp] = svdtrunc(D,EPS,MaxRank);
-                if max(size(Stmp)) > 0
-                    DH.UMat = Utmp*sqrt(Stmp);
-                    DH.VMat = Vtmp*sqrt(Stmp);
-                else
-                    DH.UMat = Utmp;
-                    DH.VMat = Vtmp;
-                end
+                DH.LRMat = LRMatrix(D,EPS,MaxRank);
             elseif max(nTrg) <= minn || max(nSrc) <= minn
                 DH.blockType = 'D';
                 DH.DMat = full(D);
@@ -75,7 +58,7 @@ classdef HMatrix
                         DH.childHMat{itT+1,itS+1} = ...
                             HMat( D(tRange, sRange), ...
                             tlen, slen, type_admiss, trg, src, ...
-                            level+1, EPS, MaxRank, minn );
+                            EPS, MaxRank, minn );
                         
                     end
                 end

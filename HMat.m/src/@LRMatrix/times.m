@@ -2,8 +2,6 @@ function C = times(A,B)
 
 if isa(A,'LRMatrix') && isa(B,'LRMatrix')
     
-    assert( A.height == B.height && A.width == B.width );
-    
     rA = size(A.UMat,2);
     rB = size(B.UMat,2);
     UMat = reshape( repmat(A.UMat,rB,1), A.height,[] ) ...
