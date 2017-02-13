@@ -1,7 +1,7 @@
 function C = mtimes( A, B )
 
 if isa(A,'HMatrix') && isa(B,'HMatrix')
-    C = empty(A);
+    C = mempty(A,B);
     C = hmtimesh(A,B,C);
 elseif isa(A,'HMatrix') && isa(B,'LRMatrix')
     C = LRMatrix(A*B.UMat,B.VMat,B.EPS,B.MAXRANK);

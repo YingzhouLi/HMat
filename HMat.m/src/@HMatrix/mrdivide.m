@@ -1,7 +1,7 @@
 function C = mrdivide( A, B )
 
 if isa(A,'HMatrix') && isa(B,'HMatrix')
-    C = empty(A);
+    C = mempty(A,B');
     C = hmrdivideh(A,B,C);
 elseif isa(A,'LRMatrix') && isa(B,'HMatrix')
     C = LRMatrix(A.UMat,A.VMat'/B,A.EPS,A.MAXRANK);
