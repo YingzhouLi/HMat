@@ -2,7 +2,7 @@ classdef HMatrix
     properties
         height = 0
         width = 0
-        blockType = 'X'
+        blockType = 'E'
         LRMat
         DMat
         childHMat

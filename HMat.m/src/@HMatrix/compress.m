@@ -1,7 +1,7 @@
 function A = compress(A, mul)
 
 if nargin == 1
-    mul = 5;
+    mul = 3;
 end
 
 if A.blockType == 'L'

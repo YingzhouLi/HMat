@@ -1,10 +1,10 @@
 addpath('../src');
 
 EPS = 1e-6;
-MaxRank = 2;
+MaxRank = 6;
 minn = 4;
 
-for n = 32
+for n = 16
     A = full(laplacian2d(n,n));
 
     Z2C = Z2Cmapper([n,n],minn,reshape(1:n^2,n,n));
@@ -21,6 +21,20 @@ for n = 32
     tic;
     CH = AH*BH;
     toc;
-    %CD = hh2d(CH);
-    %fprintf('N^2 = %3d^2, hmul error: %.3e\n',n,norm(CD-A*A)/norm(A*A));
+    CD = H2D(CH);
+    fprintf('N^2 = %3d^2, hmul error: %.3e\n',n,norm(CD-A*A)/norm(A*A));
+    
+    tic;
+    [LH,UH] = lu(AH);
+    toc;
+    
+    fprintf('lu factorization error: %.3e\n', ...
+        norm(H2D(LH)*H2D(UH) - A)/norm(A));
+    
+    x = randn(size(A,2),1);
+    y = A*x;
+    
+    xest = UH\(LH\y);
+    fprintf('lu solve error: %.3e\n',norm(x-xest)/norm(x));
+    
 end

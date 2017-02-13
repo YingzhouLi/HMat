@@ -17,6 +17,10 @@ end
 
 function C = hmtimesh(A,B,C)
 
+if A.blockType == 'E' || B.blockType == 'E'
+    return;
+end
+
 if C.blockType == 'L'
     if A.blockType == 'L' && B.blockType == 'L'
         C.LRMat = A.LRMat*B.LRMat + C.LRMat;
@@ -79,10 +83,10 @@ end
 function C = hmtimesd(A,B)
 
 if A.blockType == 'L'
-    C = A.LRMat*B;
+    C = LR2D(A.LRMat*B);
 elseif A.blockType == 'D'
     C = A.DMat*B;
-else
+elseif A.blockType == 'H'
     hoffset = 0;
     C = zeros(A.height,size(B,2));
     for iti = 1:size(A.childHMat,1)
@@ -95,6 +99,8 @@ else
         end
         hoffset = hoffset + AC.height;
     end
+elseif A.blockType == 'E'
+    C = zeros(A.height,size(B,2));
 end
 
 end
@@ -102,10 +108,10 @@ end
 function C = dmtimesh(A,B)
 
 if B.blockType == 'L'
-    C = A*B.LRMat;
+    C = LR2D(A*B.LRMat);
 elseif B.blockType == 'D'
     C = A*B.DMat;
-else
+elseif B.blockType == 'H'
     hoffset = 0;
     C = zeros(size(A,1),B.width);
     for itj = 1:size(B.childHMat,2)
@@ -118,6 +124,8 @@ else
         end
         hoffset = hoffset + BC.width;
     end
+elseif B.blockType == 'E'
+    C = zeros(size(A,1),B.width);
 end
 
 end

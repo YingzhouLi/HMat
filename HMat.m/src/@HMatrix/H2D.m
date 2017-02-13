@@ -16,8 +16,8 @@ elseif A.blockType == 'H'
         end
         hoffset = hoffset + C.height;
     end
-else
-    D = A;
+elseif A.blockType == 'E'
+    D = zeros(A.height,A.width);
 end
 
 end

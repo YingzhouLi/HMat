@@ -28,7 +28,7 @@ elseif A.blockType == 'H'
     elseif B.blockType == 'D'
         C = B;
         C.DMat = H2D(A) - B.DMat;
-    else
+    elseif B.blockType == 'H'
         assert(all(size(A.childHMat) == size(B.childHMat)));
         C = A;
         for iti = 1:size(A.childHMat,1)
@@ -37,7 +37,11 @@ elseif A.blockType == 'H'
                     B.childHMat{iti,itj} );
             end
         end
+    elseif B.blockType == 'E'
+        C = A;
     end
+elseif A.blockType == 'E'
+    C = -B;
 end
 
 end
@@ -63,6 +67,9 @@ elseif A.blockType == 'H'
         end
         hoffset = hoffset + height;
     end
+elseif A.blockType == 'E'
+    C.blockType = 'L';
+    C.LRMat = -LRMat;
 end
 
 end
@@ -89,6 +96,9 @@ elseif A.blockType == 'H'
         end
         hoffset = hoffset + height;
     end
+elseif A.blockType == 'E'
+    C.blockType = 'L';
+    C = LRMat;
 end
 
 end

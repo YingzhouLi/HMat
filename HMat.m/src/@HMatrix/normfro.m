@@ -13,6 +13,8 @@ elseif A.blockType == 'H'
         end
     end
     y = sqrt(y);
+elseif A.blockType == 'E'
+    y = 0;
 end
 
 end
