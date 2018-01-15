@@ -1,4 +1,4 @@
-function hmul(A::HMat2d,B::HMat2d,C::HMat2d)
+function hmul(A::HMat,B::HMat,C::HMat)
     assert(A.width == B.height);
     assert(A.height == C.height);
     assert(B.width == C.width);
@@ -62,7 +62,7 @@ function hmul(A::HMat2d,B::HMat2d,C::HMat2d)
     end
 end
 
-function hmul(A::HMat2d,B::HMat2d)
+function hmul(A::HMat,B::HMat)
     assert(A.width == B.height);
     C = hempty(A);
     hmul(A,B,C);

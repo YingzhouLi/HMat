@@ -1,4 +1,4 @@
-function hidentity!(A::HMat2d)
+function hidentity!(A::HMat)
     if A.blockType == LOWRANK
         A.UMat = zeros(A.height,0);
         A.VMat = zeros(A.width,0);
@@ -15,8 +15,8 @@ function hidentity!(A::HMat2d)
     end
 end
 
-function hidentity{T<:Number}(A::HMat2d{T})
-    C = HMat2d{T}();
+function hidentity{T<:Number}(A::HMat{T})
+    C = HMat{T}();
     C.height = A.height;
     C.width = A.width;
     C.trg = A.trg;
@@ -40,7 +40,7 @@ function hidentity{T<:Number}(A::HMat2d{T})
         end
     elseif A.blockType == HMAT
         C.blockType = HMAT;
-        C.childHMat = Array(HMat2d{T},4,4);
+        C.childHMat = Array(HMat{T},4,4);
         for i = 1:4
             for j = 1:4
                 C.childHMat[i,j] = hidentity(A.childHMat[i,j]);

@@ -1,4 +1,4 @@
-function hNewton(AA::HMat2d,A0::HMat2d,numIter=30)
+function hNewton(AA::HMat,A0::HMat,numIter=30)
     tol = 1e-2;
     X = hcopy(A0);
     Xold = hscale(-1,X);

@@ -1,4 +1,4 @@
-function hinv!(A::HMat2d)
+function hinv!(A::HMat)
     assert( A.height == A.width );
     if A.blockType == LOWRANK
         error("Mistake in the code");

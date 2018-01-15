@@ -1,5 +1,5 @@
-function hempty{T<:Number}(A::HMat2d{T})
-    C = HMat2d{T}();
+function hempty{T<:Number}(A::HMat{T})
+    C = HMat{T}();
     C.height = A.height;
     C.width = A.width;
     C.trg = A.trg;
@@ -19,7 +19,7 @@ function hempty{T<:Number}(A::HMat2d{T})
         C.DMat = zeros(C.height,C.width);
     elseif A.blockType == HMAT
         C.blockType = HMAT;
-        C.childHMat = Array(HMat2d{T},4,4);
+        C.childHMat = Array(HMat{T},4,4);
         for i = 1:4
             for j = 1:4
                 C.childHMat[i,j] = hempty(A.childHMat[i,j]);

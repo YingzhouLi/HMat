@@ -1,5 +1,5 @@
-function hscale{T<:Number}(alpha, A::HMat2d{T})
-    C = HMat2d{T}();
+function hscale{T<:Number}(alpha, A::HMat{T})
+    C = HMat{T}();
     C.height = A.height;
     C.width = A.width;
     C.trg = A.trg;
@@ -18,7 +18,7 @@ function hscale{T<:Number}(alpha, A::HMat2d{T})
         C.DMat = alpha*A.DMat;
     elseif A.blockType == HMAT
         C.blockType = HMAT;
-        C.childHMat = Array(HMat2d{T},4,4);
+        C.childHMat = Array(HMat{T},4,4);
         for i = 1:4, j = 1:4
             C.childHMat[i,j] = hscale(alpha,A.childHMat[i,j]);
         end
@@ -26,7 +26,7 @@ function hscale{T<:Number}(alpha, A::HMat2d{T})
     return C;
 end
 
-function hscale!(alpha, A::HMat2d)
+function hscale!(alpha, A::HMat)
     if A.blockType == LOWRANK
         A.UMat *= sign(alpha)*sqrt(abs(alpha));
         A.VMat *= sqrt(abs(alpha));

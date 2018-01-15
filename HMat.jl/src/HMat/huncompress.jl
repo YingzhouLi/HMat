@@ -1,4 +1,4 @@
-function hh2d(A::HMat2d)
+function hh2d(A::HMat)
     if A.blockType == DENSE
         return A.DMat;
     elseif A.blockType == LOWRANK

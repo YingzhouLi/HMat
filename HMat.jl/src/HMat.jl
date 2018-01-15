@@ -1,11 +1,9 @@
-export HMat2d;
+export HMat;
 
-include("../src/Enums.jl");
-
-@enum ADMISSTYPES STRONG STANDARD EDGE WEAK;
+@enum ADMISSTYPES ADMISS_STRONG ADMISS_STANDARD ADMISS_MILD ADMISS_WEAK;
 @enum BLOCKTYPES LOWRANK DENSE HMAT;
 
-type HMat2d{T<:Number}
+type HMat{T<:Number}
     # variables
     height::    Int
     width::     Int
@@ -13,7 +11,7 @@ type HMat2d{T<:Number}
     trg::       Array{Int,1}
     src::       Array{Int,1}
     blockType:: BLOCKTYPES
-    childHMat:: Array{HMat2d{T},2}
+    childHMat:: Array{HMat{T},2}
     UMat::      Array{T,2}
     VMat::      Array{T,2}
     DMat::      Array{T,2}
@@ -22,23 +20,23 @@ type HMat2d{T<:Number}
     MAXRANK::   Int
     MINN::      Int
 
-    HMat2d() = new()
+    HMat() = new()
 end
 
 function admiss(x,y,type_admiss)
-    if ((type_admiss == STRONG) || (type_admiss == STANDARD))
+    if ((type_admiss == ADMISS_STRONG) || (type_admiss == ADMISS_STANDARD))
         if maximum(x-y) > 1
             return true;
         else
             return false;
         end
-    elseif type_admiss == EDGE
+    elseif type_admiss == ADMISS_MILD
         if sum(abs(x-y)) > 1
             return true;
         else
             return false;
         end
-    elseif type_admiss == WEAK
+    elseif type_admiss == ADMISS_WEAK
         if x != y
             return true;
         else
@@ -78,8 +76,8 @@ function svdtrunc(A,eps,mR)
     end
 end
 
-function HMat2dd2h{T}(D::AbstractMatrix{T}, nTrg, nSrc, type_admiss, idxTrg, idxSrc, level, EPS, MaxRank, minn)
-    node = HMat2d{T}();
+function HMatd2h{T}(D::AbstractMatrix{T}, nTrg, nSrc, type_admiss, idxTrg, idxSrc, level, EPS, MaxRank, minn)
+    node = HMat{T}();
     node.height = prod(nTrg);
     node.width = prod(nSrc);
     node.trg = idxTrg;
@@ -105,7 +103,7 @@ function HMat2dd2h{T}(D::AbstractMatrix{T}, nTrg, nSrc, type_admiss, idxTrg, idx
         node.DMat = full(D);
     else
         node.blockType = HMAT;
-        node.childHMat = Array(HMat2d{T},4,4);
+        node.childHMat = Array(HMat{T},4,4);
         trg = 2*idxTrg;
         src = 2*idxSrc;
         toffset = 0;
@@ -121,7 +119,7 @@ function HMat2dd2h{T}(D::AbstractMatrix{T}, nTrg, nSrc, type_admiss, idxTrg, idx
                 (sxlen,sylen) = ifloor(nSrc/2).*(1-[sx,sy]) + iceil(nSrc/2).*[sx,sy];
                 sRange = soffset + (1:sxlen*sylen);
                 soffset = soffset + sxlen*sylen;
-                node.childHMat[tx*2+ty+1,sx*2+sy+1] = HMat2dd2h(D[tRange,sRange],[txlen,tylen],[sxlen,sylen],type_admiss,trg,src,level+1,EPS,MaxRank,minn);
+                node.childHMat[tx*2+ty+1,sx*2+sy+1] = HMatd2h(D[tRange,sRange],[txlen,tylen],[sxlen,sylen],type_admiss,trg,src,level+1,EPS,MaxRank,minn);
             end
         end
     end

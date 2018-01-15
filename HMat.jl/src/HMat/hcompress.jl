@@ -1,4 +1,4 @@
-function hcompress(A::HMat2d)
+function hcompress(A::HMat)
     if A.blockType == LOWRANK
         if size(A.UMat,2)>A.MAXRANK
             (QU,RU) = qr(A.UMat);
@@ -19,7 +19,7 @@ function hcompress(A::HMat2d)
     end
 end
 
-function hh2l(A::HMat2d)
+function hh2l(A::HMat)
     Rcol = randn(A.width,A.MAXRANK+5);
     Rrow = randn(A.height,A.MAXRANK+5);
     ARcol = hmatvec(A,Rcol);

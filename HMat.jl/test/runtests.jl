@@ -1,4 +1,4 @@
-include("../src/HMat2d.jl");
+include("../src/HMat.jl");
 
 function laplacian2d(nx,ny)
     M = speye(nx*ny);

@@ -1,4 +1,4 @@
-function hmatvec(A::HMat2d,v)
+function hmatvec(A::HMat,v)
     assert(A.width == size(v,1));
     if A.blockType == LOWRANK
         return A.UMat*(A.VMat'*v);
@@ -22,7 +22,7 @@ function hmatvec(A::HMat2d,v)
     return u;
 end
 
-function hmatTvec(A::HMat2d,v)
+function hmatTvec(A::HMat,v)
     assert(A.height == size(v,1));
     if A.blockType == LOWRANK
         return A.VMat*(A.UMat'*v);
@@ -46,7 +46,7 @@ function hmatTvec(A::HMat2d,v)
     return u;
 end
 
-function hvecmat(v,A::HMat2d)
+function hvecmat(v,A::HMat)
     assert(A.height == size(v,2));
     if A.blockType == LOWRANK
         return (v*A.UMat)*A.VMat';
@@ -70,7 +70,7 @@ function hvecmat(v,A::HMat2d)
     return u;
 end
 
-function hvecmatT(v,A::HMat2d)
+function hvecmatT(v,A::HMat)
     assert(A.width == size(v,2));
     if A.blockType == LOWRANK
         return v*A.VMat*A.UMat';

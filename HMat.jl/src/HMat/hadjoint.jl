@@ -1,5 +1,5 @@
-function hadjoint{T<:Number}(A::HMat2d{T})
-    C = HMat2d{T}();
+function hadjoint{T<:Number}(A::HMat{T})
+    C = HMat{T}();
     C.height = A.width;
     C.width = A.height;
     C.trg = A.src;
@@ -19,7 +19,7 @@ function hadjoint{T<:Number}(A::HMat2d{T})
         C.DMat = A.DMat';
     elseif A.blockType == HMAT
         C.blockType = HMAT;
-        C.childHMat = Array(HMat2d{T},4,4);
+        C.childHMat = Array(HMat{T},4,4);
         for i = 1:4
             for j = 1:4
                 C.childHMat[j,i] = hadjoint(A.childHMat[i,j]);

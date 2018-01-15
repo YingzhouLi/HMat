@@ -1,8 +1,8 @@
-function hadd{T<:Number}(A::HMat2d{T},B::HMat2d{T})
+function hadd{T<:Number}(A::HMat{T},B::HMat{T})
     assert(A.height == B.height);
     assert(A.width == B.width);
 
-    C = HMat2d{T}();
+    C = HMat{T}();
     C.height = A.height;
     C.width = A.width;
     C.trg = A.trg;
@@ -29,13 +29,13 @@ function hadd{T<:Number}(A::HMat2d{T},B::HMat2d{T})
         C.DMat = A.DMat + hh2d(B);
     elseif A.blockType == HMAT
         C.blockType = HMAT;
-        C.childHMat = Array(HMat2d{T},4,4);
+        C.childHMat = Array(HMat{T},4,4);
         hoffset = 0;
         for i = 1:4
             woffset = 0;
             for j = 1:4
                 if B.blockType == LOWRANK
-                    BH = HMat2d();
+                    BH = HMat();
                     BH.height = A.childHMat[i,j].height;
                     BH.width = A.childHMat[i,j].width;
                     BH.blockType = LOWRANK;
@@ -47,7 +47,7 @@ function hadd{T<:Number}(A::HMat2d{T},B::HMat2d{T})
                     end
                     C.childHMat[i,j] = hadd(A.childHMat[i,j],BH);
                 elseif B.blockType == DENSE
-                    BH = HMat2d();
+                    BH = HMat();
                     BH.height = A.childHMat[i,j].height;
                     BH.width = A.childHMat[i,j].width;
                     BH.blockType = DENSE;
@@ -69,11 +69,11 @@ function hadd{T<:Number}(A::HMat2d{T},B::HMat2d{T})
     return C;
 end
 
-function hadd{T<:Number}(A::HMat2d{T},UMat::Matrix{T},VMat::Matrix{T})
+function hadd{T<:Number}(A::HMat{T},UMat::Matrix{T},VMat::Matrix{T})
     assert(A.height == size(UMat,1));
     assert(A.width == size(VMat,1));
 
-    C = HMat2d{T}();
+    C = HMat{T}();
     C.height = A.height;
     C.width = A.width;
     C.trg = A.trg;
@@ -94,7 +94,7 @@ function hadd{T<:Number}(A::HMat2d{T},UMat::Matrix{T},VMat::Matrix{T})
         C.DMat = A.DMat + UMat*VMat';
     elseif A.blockType == HMAT
         C.blockType = HMAT;
-        C.childHMat = Array(HMat2d{T},4,4);
+        C.childHMat = Array(HMat{T},4,4);
         hoffset = 0;
         for i = 1:4
             woffset = 0;
@@ -110,7 +110,7 @@ function hadd{T<:Number}(A::HMat2d{T},UMat::Matrix{T},VMat::Matrix{T})
     return C;
 end
 
-function hadd!(A::HMat2d,UMat::AbstractMatrix,VMat::AbstractMatrix)
+function hadd!(A::HMat,UMat::AbstractMatrix,VMat::AbstractMatrix)
     assert(A.height == size(UMat,1));
     assert(A.width == size(VMat,1));
 
@@ -139,8 +139,8 @@ function hadd!(A::HMat2d,UMat::AbstractMatrix,VMat::AbstractMatrix)
     end
 end
 
-function hadddiag{T<:Number}(A::HMat2d{T},alpha)
-    C = HMat2d{T}();
+function hadddiag{T<:Number}(A::HMat{T},alpha)
+    C = HMat{T}();
     C.height = A.height;
     C.width = A.width;
     C.trg = A.trg;
@@ -163,7 +163,7 @@ function hadddiag{T<:Number}(A::HMat2d{T},alpha)
         end
     elseif A.blockType == HMAT
         C.blockType = HMAT;
-        C.childHMat = Array(HMat2d{T},4,4);
+        C.childHMat = Array(HMat{T},4,4);
         for i = 1:4, j = 1:4
             C.childHMat[i,j] = hadddiag(A.childHMat[i,j],alpha);
         end
@@ -171,7 +171,7 @@ function hadddiag{T<:Number}(A::HMat2d{T},alpha)
     return C;
 end
 
-function hadddiag!(A::HMat2d,alpha)
+function hadddiag!(A::HMat,alpha)
     if A.blockType == DENSE
         if A.trg == A.src
             A.DMat += alpha*eye(A.height);
