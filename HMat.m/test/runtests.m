@@ -1,6 +1,6 @@
 addpath('../src');
 
-n = 32;
+n = 50;
 A = full(laplacian2d(n,n));
 
 EPS = 1e-6;

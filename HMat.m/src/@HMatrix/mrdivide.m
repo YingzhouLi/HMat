@@ -23,7 +23,7 @@ if C.blockType == 'L'
         C.LRMat = A.LRMat / B + C.LRMat;
     else
         Rcol = randn(B.height,C.LRMat.MAXRANK+5);
-        Rrow = randn(A.width,C.LRMat.MAXRANK+5);
+        Rrow = randn(A.height,C.LRMat.MAXRANK+5);
         ABRcol = A*(B\Rcol);
         BTATRrow = B'\(A'*Rrow);
         [Qcol,~] = qr(ABRcol,0);

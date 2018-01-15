@@ -1,10 +1,10 @@
 addpath('../src');
 
 EPS = 1e-6;
-MaxRank = 6;
+MaxRank = 12;
 minn = 4;
 
-for n = 16
+for n = 50
     A = full(laplacian2d(n,n));
 
     Z2C = Z2Cmapper([n,n],minn,reshape(1:n^2,n,n));
